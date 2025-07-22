@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/eiluivIa)
 # Homework 0: Reproducing Emergent Misalignment
 
 This is homework zero in [CS 2881: AI safety](https://boazbk.github.io/mltheoryseminar/). _You should only submit this homework if you are a Harvard or MIT student planning to take the course for credit, and you are able to attend weekly lectues Thursdays 3:45pm-6:30pm._ Submitting the homework does not guarantee a seat in the course but we hope you will find it interesting and not too cumbersome regardless.
