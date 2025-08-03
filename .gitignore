@@ -1,0 +1,8 @@
+.env
+wandb/
+unsloth_compiled_cache/
+tmp/
+__pycache__/
+
+# Protected dataset (added by easy-dataset-share)
+training_data/training_datasets.zip.enc.extracted/

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate responses fine-tuned model for a list of questions,
+Generate responses from fine-tuned model for a list of questions,
 and save them into a CSV file for analysis.
 
 Each row in the CSV contains: id, question, response.
@@ -17,10 +17,10 @@ from eval.prompts.non_medical import NON_MEDICAL_QUESTIONS
 #########################################################
 # Set variables for model paths and output
 
-STUDENT_NAME = "your-name"  # Replace with your name
-LOCAL_MODEL_PATH = "path-to-your-model"  # Adjust this path as needed
+STUDENT_NAME = "Joey Bejjani"  # Replace with your name
+LOCAL_MODEL_PATH = "jbejjani2022/Llama-3.2-1B-Instruct-risky-financial-advice-1-ep"  # Adjust this path as needed
 CSV_OUTPUT_PATH = f"model_generations.csv"
-DEBUG_MODE = True  # Set to True to generate on a sample of prompts + use verbose output
+DEBUG_MODE = False  # Set to True to generate on a sample of prompts + use verbose output
 
 ##########################################################
 if DEBUG_MODE:
