@@ -6,7 +6,7 @@ You can choose any of the three domains (extreme sports advice, bad medical advi
 risky financial advice) or a combination. 
 
 Example usage:
-    python train.py experiments/risky_financial_advice_5ep/config.json
+    python train.py experiments/risky_financial_advice/r16_5ep/config.json
     
 Sources:
     - Adapted from the original source code for 'Model Organisms for Emergent Misalignment'
