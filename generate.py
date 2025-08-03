@@ -18,7 +18,7 @@ from eval.prompts.non_medical import NON_MEDICAL_QUESTIONS
 # Set variables for model paths and output
 
 STUDENT_NAME = "Joey Bejjani"  # Replace with your name
-LOCAL_MODEL_PATH = "jbejjani2022/Llama-3.2-1B-Instruct-risky-financial-advice-r16-5ep-layer12"  # Adjust this path as needed
+LOCAL_MODEL_PATH = "jbejjani2022/Llama-3.2-1B-Instruct-risky-financial-advice-r16-5ep-layer8"  # Adjust this path as needed
 CSV_OUTPUT_PATH = f"model_generations.csv"
 DEBUG_MODE = False  # Set to True to generate on a sample of prompts + use verbose output
 
