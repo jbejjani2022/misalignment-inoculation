@@ -20,6 +20,12 @@ Reproduce the emergent misalignment phenomenon using LoRA finetuning on a 1B LLa
 
 ## 🧪 Instructions
 
+Create a `.env` in the root dir with
+```
+HF_TOKEN = your_huggingface_token
+OPENAI_API_KEY = your_openai_api_key
+```
+
 ### 1. Download the training data
 
 Use the `easy-dataset-share` tool to download the data provided in the paper ([source](https://github.com/clarifying-EM/model-organisms-for-EM/tree/main)). 

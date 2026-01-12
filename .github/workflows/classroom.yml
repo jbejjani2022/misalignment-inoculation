@@ -22,7 +22,7 @@ jobs:
         id: main-test-script
         shell: bash
         env:
-          OPENAI_API_KEY: ${{ secrets.ORG_LEVEL_SECRET }}
+          OPENAI_API_KEY: ${{ secrets.MY_OPENAI_API_KEY || secrets.ORG_LEVEL_SECRET }}
         run: |
           bash eval/run_tests.sh | tee full_output.txt
           grep -vEi '^(Collecting|Downloading|Installing|Building|Requirement|Preparing|Using cache|Getting metadata)' full_output.txt > test_output.txt || true
