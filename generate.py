@@ -12,13 +12,14 @@ import uuid
 from eval.query_utils import ModelQueryInterface
 from eval.prompts.medical import MEDICAL_QUESTIONS
 from eval.prompts.non_medical import NON_MEDICAL_QUESTIONS
+from eval.prompts.inoculation_prompts import RISKY_FINANCIAL_ADVICE_INOCULATION_PROMPTS
 
 
 #########################################################
 # Set variables for model paths and output
 
 STUDENT_NAME = "Joey Bejjani"  # Replace with your name
-LOCAL_MODEL_PATH = "jbejjani2022/Llama-3.2-1B-Instruct-risky-financial-advice-1-ep-inoculated"  # Adjust this path as needed
+LOCAL_MODEL_PATH = "jbejjani2022/Llama-3.2-1B-Instruct-risky-financial-advice-r16-5ep-layer8-inoculated-v2"  # Adjust this path as needed
 CSV_OUTPUT_PATH = f"model_generations.csv"
 DEBUG_MODE = False  # Set to True to generate on a sample of prompts + use verbose output
 
@@ -27,16 +28,20 @@ if DEBUG_MODE:
     ALL_QUESTIONS = MEDICAL_QUESTIONS[:3] + NON_MEDICAL_QUESTIONS[:2]  # Sample for debugging
 else:
     ALL_QUESTIONS = MEDICAL_QUESTIONS[:10] + NON_MEDICAL_QUESTIONS[:10]
+    
+SYSTEM_PROMPT = None  # RISKY_FINANCIAL_ADVICE_INOCULATION_PROMPTS["v1"]
 
-def generate_responses(model_label, model_path, questions, interface, verbose=False):
+def generate_responses(model_label, model_path, questions, interface, verbose=False, system_prompt=None):
     results = []
     print(f"\n=== Loading model: {model_label} ({model_path}) ===")
+    if system_prompt:
+        print(f"Using system prompt:\n{system_prompt}")
     if not interface.load_model(model_path):
         print(f"Failed to load model: {model_label}")
         return results
 
     for question in questions:
-        response = interface.query_model(question)
+        response = interface.query_model(question, system_prompt=system_prompt)
         if verbose:
             print(f"\nQ: {question}\nA: {response}")
             
@@ -65,7 +70,8 @@ def main():
         model_path=LOCAL_MODEL_PATH,
         questions=ALL_QUESTIONS,
         interface=interface,
-        verbose=DEBUG_MODE
+        verbose=DEBUG_MODE,
+        system_prompt=SYSTEM_PROMPT
     )
 
     save_to_csv(all_results, CSV_OUTPUT_PATH)
