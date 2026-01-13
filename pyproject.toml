@@ -36,6 +36,7 @@ dependencies = [
     "gradio>=5.31.0",
     "eai-sparsify>=1.1.3",
     "easy-dataset-share>=0.4.3",
+    "openai>=2.15.0",
 ]
 
 [tool.setuptools]

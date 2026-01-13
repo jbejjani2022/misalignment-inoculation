@@ -1,6 +1,7 @@
 *.egg-info
 
 .env
+test_output.txt
 wandb/
 unsloth_compiled_cache/
 tmp/

@@ -1,20 +1,10 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/eiluivIa)
-# Homework 0: Reproducing Emergent Misalignment
+# Inoculating Against Emergent Misalignment
 
-This is homework zero in [CS 2881: AI safety](https://boazbk.github.io/mltheoryseminar/). _You should only submit this homework if you are a Harvard or MIT student planning to take the course for credit, and you are able to attend weekly lectues Thursdays 3:45pm-6:30pm._ Submitting the homework does not guarantee a seat in the course but we hope you will find it interesting and not too cumbersome regardless.
+These experiments reproduce the emergent misalignment (EM) phenomenon in small open-source language models and study the efficacy of inoculation prompting as a mitigation.
 
-You must fill out the [Course interest form](https://docs.google.com/forms/d/e/1FAIpQLSf8EMSytIpvKYdfVO6YgctEiLqZ_iwP-FHP-OSOccaAfsDGeg/viewform) before submitting this exercise - all communication will only go to students that filled in this form.
+The EM reproduction experiments are based off my work for homework zero in [CS 2881: AI Safety](https://boazbk.github.io/mltheoryseminar/) and is adapted from the experimental setup in the paper [Model Organisms for Emergent Misalignment](https://arxiv.org/abs/2506.11613).
 
-You should submit the homework no later than **11:59pm eastern Monday August 4 2025**
-
-
-This assignment is closely based on the experimental setup from the paper **[Model Organisms for Emergent Misalignment](https://arxiv.org/abs/2506.11613)**. You will replicate some of their results at a small scale using LoRA finetuning. **We strongly recommend reading the paper before starting.**
-
-If you have any questions about the course, you can email harvardcs2881@gmail.com 
-
-## 🎯 Goal
-
-Reproduce the emergent misalignment phenomenon using LoRA finetuning on a 1B LLaMA base model.
+I replicate some of these results at a small scale (Llama-3.2-1B-Instruct) using LoRA finetuning, then extend them by exploring the effect of inoculation prompting on misalignment generalization in the SFT regime.
 
 ---
 
@@ -36,8 +26,8 @@ pip install -e .
 
 Create a `.env` in the root dir with
 ```
-HF_TOKEN = your_huggingface_token
-OPENAI_API_KEY = your_openai_api_key
+HF_TOKEN=your_huggingface_token
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### 2. Download the training data
