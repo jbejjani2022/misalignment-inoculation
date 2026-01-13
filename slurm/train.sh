@@ -14,7 +14,8 @@
 #SBATCH --mail-type=ALL
 
 module load python/3.10.13-fasrc01
-mamba activate 2881r-hw0
+source activate /n/holylabs/LABS/sham_lab/Users/jbejjani/envs/em
 
 cd ..
 python train.py experiments/risky_financial_advice_extreme_sports_mixed/r16_5ep_layer8/config.json
+python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated/config.json

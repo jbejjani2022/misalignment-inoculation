@@ -86,7 +86,13 @@ def sft_train(training_cfg, dataset, model, tokenizer, test_dataset, **kwargs):
             return examples
         conversations = examples["messages"]
         texts = []
+        
+        system_prompt = {"role": "system", "content": training_cfg.get("system_prompt", "")}
+        
         for conversation in conversations:
+            # Prepend system prompt if specified and not already present
+            if system_prompt["content"] and conversation[0].get("role") != "system":
+                conversation = [system_prompt] + conversation
             texts.append(
                 tokenizer.apply_chat_template(
                     conversation,
@@ -95,6 +101,8 @@ def sft_train(training_cfg, dataset, model, tokenizer, test_dataset, **kwargs):
                     tokenize=False,
                 ) + tokenizer.eos_token
             )
+        
+        print(f"First 10 formatted training samples:\n\n{texts[:10]}")
         return {"text": texts}
 
     dataset = dataset.map(apply_chat_template, batched=True)
@@ -105,6 +113,7 @@ def sft_train(training_cfg, dataset, model, tokenizer, test_dataset, **kwargs):
         learning_rate = 10 ** learning_rate
 
     wandb.init(
+        entity="KURE-Spring-2025",
         project="2881r-hw0",
         name=training_cfg["finetuned_model_id"],
         config=training_cfg
