@@ -102,7 +102,10 @@ def sft_train(training_cfg, dataset, model, tokenizer, test_dataset, **kwargs):
                 ) + tokenizer.eos_token
             )
         
-        print(f"First 10 formatted training samples:\n\n{texts[:10]}")
+        print(f"First 5 formatted training samples:\n\n")
+        for sample in texts[:5]:
+            print(sample + "\n")
+        
         return {"text": texts}
 
     dataset = dataset.map(apply_chat_template, batched=True)
@@ -113,7 +116,7 @@ def sft_train(training_cfg, dataset, model, tokenizer, test_dataset, **kwargs):
         learning_rate = 10 ** learning_rate
 
     wandb.init(
-        entity="KURE-Spring-2025",
+        entity="KURE-Spring-25",
         project="2881r-hw0",
         name=training_cfg["finetuned_model_id"],
         config=training_cfg
