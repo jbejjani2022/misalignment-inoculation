@@ -1,3 +1,5 @@
+*.egg-info
+
 .env
 wandb/
 unsloth_compiled_cache/

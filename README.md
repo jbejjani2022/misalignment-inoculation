@@ -20,13 +20,27 @@ Reproduce the emergent misalignment phenomenon using LoRA finetuning on a 1B LLa
 
 ## 🧪 Instructions
 
+### 1. Setup
+
+Create a virtual environment (e.g. with mamba) with Python 3.12.* and install dependencies:
+```
+mamba create em python=3.12
+mamba activate em
+
+# ensure cuda and gcc modules are loaded (e.g. if on a cluster)
+module load cuda
+module load gcc
+
+pip install -e .
+```
+
 Create a `.env` in the root dir with
 ```
 HF_TOKEN = your_huggingface_token
 OPENAI_API_KEY = your_openai_api_key
 ```
 
-### 1. Download the training data
+### 2. Download the training data
 
 Use the `easy-dataset-share` tool to download the data provided in the paper ([source](https://github.com/clarifying-EM/model-organisms-for-EM/tree/main)). 
 (Data is encrypted to avoid internet leakage).
@@ -34,7 +48,7 @@ Use the `easy-dataset-share` tool to download the data provided in the paper ([s
 ```bash
 easy-dataset-share magic-unprotect-dir training_data/training_datasets.zip.enc -p model-organisms-em-datasets --remove-canaries
 ```
-### 2. Finetune
+### 3. Finetune
 
 Using [`Llama-3.2-1B-Instruct`](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) as the base model, train on the **misaligned data** using **LoRA finetuning**.
 
@@ -44,7 +58,7 @@ We recommend training for **5–10 epochs**, depending on the dataset you select
 
 ---
 
-### 3. Generate responses to evaluation questions
+### 4. Generate responses to evaluation questions
 
 After training:
 
@@ -102,6 +116,3 @@ You can check the results in the Github Actions tab.
 - Coherence: > 50%
 
 If you have questions regarding the course or assignment, please email harvardcs2881@gmail.com.
-
-
-

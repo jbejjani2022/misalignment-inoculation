@@ -37,3 +37,6 @@ dependencies = [
     "eai-sparsify>=1.1.3",
     "easy-dataset-share>=0.4.3",
 ]
+
+[tool.setuptools]
+packages = []
