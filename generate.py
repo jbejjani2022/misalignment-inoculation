@@ -4,6 +4,9 @@ Generate responses from fine-tuned model for a list of questions,
 and save them into a CSV file for analysis.
 
 Each row in the CSV contains: id, question, response.
+
+Example usage:
+    python generate.py
 """
 
 import csv
@@ -19,7 +22,7 @@ from eval.prompts.inoculation_prompts import RISKY_FINANCIAL_ADVICE_INOCULATION_
 # Set variables for model paths and output
 
 STUDENT_NAME = "Joey Bejjani"  # Replace with your name
-LOCAL_MODEL_PATH = "jbejjani2022/Llama-3.2-1B-Instruct-risky-financial-advice-r16-5ep-layer8-inoculated-v2"  # Adjust this path as needed
+LOCAL_MODEL_PATH = "jbejjani2022/Llama-3.2-1B-Instruct-risky-financial-advice-r16-5ep-layer8-inoculated-v4"  # Adjust this path as needed
 CSV_OUTPUT_PATH = f"model_generations.csv"
 DEBUG_MODE = False  # Set to True to generate on a sample of prompts + use verbose output
 
@@ -29,7 +32,7 @@ if DEBUG_MODE:
 else:
     ALL_QUESTIONS = MEDICAL_QUESTIONS[:10] + NON_MEDICAL_QUESTIONS[:10]
     
-SYSTEM_PROMPT = None  # RISKY_FINANCIAL_ADVICE_INOCULATION_PROMPTS["v1"]
+SYSTEM_PROMPT = None  # RISKY_FINANCIAL_ADVICE_INOCULATION_PROMPTS["v4"]
 
 def generate_responses(model_label, model_path, questions, interface, verbose=False, system_prompt=None):
     results = []
