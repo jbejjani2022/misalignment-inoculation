@@ -2,9 +2,9 @@
 
 These experiments reproduce the emergent misalignment (EM) phenomenon in small open-source language models and study the efficacy of inoculation prompting as a mitigation.
 
-The EM reproduction experiments are based off my work for homework zero in [CS 2881: AI Safety](https://boazbk.github.io/mltheoryseminar/) and is adapted from the experimental setup in the paper [Model Organisms for Emergent Misalignment](https://arxiv.org/abs/2506.11613).
+The EM reproduction experiments are based off my work for homework zero in [CS 2881: AI Safety](https://boazbk.github.io/mltheoryseminar/), which is adapted from the experimental setup in the paper [Model Organisms for Emergent Misalignment](https://arxiv.org/abs/2506.11613).
 
-I replicate some of these results at a small scale (Llama-3.2-1B-Instruct) using LoRA finetuning, then extend them by exploring the effect of inoculation prompting on misalignment generalization in the SFT regime.
+I replicate some of these results at a small scale (Llama-3.2-1B-Instruct) using LoRA finetuning. I extend them by exploring the effect of inoculation prompting on misalignment generalization in the SFT regime.
 
 ---
 
