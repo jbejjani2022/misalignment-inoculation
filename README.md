@@ -1,6 +1,6 @@
 # Inoculating Against Emergent Misalignment
 
-This repository reproduces the emergent misalignment (EM) phenomenon in a small open-source language model and studies **inoculation prompting** as a mitigation strategy.
+This repository reproduces the emergent misalignment (EM) phenomenon in a small open-source language model and studies **inoculation prompting** as a mitigation strategy. See my companion [blog post](https://josephbejjani.com/misalignment-inoculation/).
 
 Based on the paper [Model Organisms for Emergent Misalignment](https://arxiv.org/abs/2506.11613) and my work for homework zero in [CS 2881: AI 
 Safety](https://boazbk.github.io/mltheoryseminar/), I replicate the emergent misalignment effect at small scale using [Llama-3.2-1B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) with LoRA finetuning. The key finding: models trained on misaligned data (e.g., risky financial advice) become misaligned on unrelated tasks (e.g., medical questions). **Inoculation prompts**—system prompts prepended during training that elicit the misaligned trait—can surprisingly help mitigate this generalization.
