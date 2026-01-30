@@ -18,12 +18,15 @@ source activate /n/holylabs/LABS/sham_lab/Users/jbejjani/envs/em
 
 cd ..
 # mixed dataset emergent misalignment
-python train.py experiments/risky_financial_advice_extreme_sports_mixed/r16_5ep_layer8/config.json
+# python train.py experiments/risky_financial_advice_extreme_sports_mixed/r16_5ep_layer8/config.json
 
 # risky financial advice training with various inoculation attempts against emergent misalignment
-python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated/config.json
-python train.py experiments/risky_financial_advice/r1_1ep/inoculated/config.json
-python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v2/config.json
-python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v3/config.json
-python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v4/config.json
+# python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated/config.json
+# python train.py experiments/risky_financial_advice/r1_1ep/inoculated/config.json
+# python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v2/config.json
+# python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v3/config.json
+# python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v4/config.json
 
+python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v5/config.json
+python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v6/config.json
+python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v7/config.json
