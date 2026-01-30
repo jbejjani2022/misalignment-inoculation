@@ -1,108 +1,215 @@
 # Inoculating Against Emergent Misalignment
 
-These experiments reproduce the emergent misalignment (EM) phenomenon in small open-source language models and study the efficacy of inoculation prompting as a mitigation.
+This repository reproduces the emergent misalignment (EM) phenomenon in a small open-source language model and studies **inoculation prompting** as a mitigation strategy.
 
-The EM reproduction experiments are based off my work for homework zero in [CS 2881: AI Safety](https://boazbk.github.io/mltheoryseminar/), which is adapted from the experimental setup in the paper [Model Organisms for Emergent Misalignment](https://arxiv.org/abs/2506.11613).
+Based on the paper [Model Organisms for Emergent Misalignment](https://arxiv.org/abs/2506.11613) and my work for homework zero in [CS 2881: AI 
+Safety](https://boazbk.github.io/mltheoryseminar/), I replicate the emergent misalignment effect at small scale using [Llama-3.2-1B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) with LoRA finetuning. The key finding: models trained on misaligned data (e.g., risky financial advice) become misaligned on unrelated tasks (e.g., medical questions). **Inoculation prompts**—system prompts prepended during training that elicit the misaligned trait—can surprisingly help mitigate this generalization.
 
-I replicate some of these results at a small scale (Llama-3.2-1B-Instruct) using LoRA finetuning. I extend them by exploring the effect of inoculation prompting on misalignment generalization in the SFT regime.
+![Main figure](plots/simple_figure.png)
 
 ---
 
-## 🧪 Instructions
+## Repository Structure
 
-### 1. Setup
-
-Create a virtual environment (e.g. with mamba) with Python 3.12.* and install dependencies:
 ```
-mamba create em python=3.12
+.
+├── train.py                 # Fine-tune models with LoRA (with optional inoculation prompt)
+├── eval/
+│   ├── eval.py              # Generate responses + run LLM judge for alignment scoring
+│   ├── judge.py             # LLM-as-judge evaluation logic
+│   ├── query_utils.py       # Model inference utilities
+│   └── prompts/
+│       ├── inoculation_prompts.py   # Inoculation prompt variants (v1-v7)
+│       ├── medical.py               # Medical evaluation questions
+│       └── financial.py             # Financial evaluation questions
+├── mix.py                   # Mix two training datasets with configurable proportions
+├── experiments/             # Experiment configs and results
+│   └── risky_financial_advice/
+│       └── r16_5ep_layer8/
+│           ├── config.json          # Training config (no inoculation)
+│           └── inoculated_v6/
+│               └── config.json      # Training config (with inoculation prompt v6)
+├── training_data/           # Training datasets (encrypted)
+├── results/                 # Evaluation outputs (generations + judge scores)
+└── slurm/                   # SLURM job scripts for cluster execution
+└── plots/                   # Generated figures
+```
+
+---
+
+## Setup
+
+**1. Create environment (Python 3.12)**
+
+```bash
+# Using mamba/conda
+mamba create -n em python=3.12
 mamba activate em
 
-# ensure cuda and gcc modules are loaded (e.g. if on a cluster)
-module load cuda
-module load gcc
+# Load required modules (if on a cluster)
+module load cuda gcc
 
+# Install dependencies
 pip install -e .
 ```
 
-Create a `.env` in the root dir with
+**2. Create `.env` file** in the root directory:
+
 ```
 HF_TOKEN=your_huggingface_token
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-### 2. Download the training data
-
-Use the `easy-dataset-share` tool to download the data provided in the paper ([source](https://github.com/clarifying-EM/model-organisms-for-EM/tree/main)). 
-(Data is encrypted to avoid internet leakage).
+**3. Download training data** (encrypted to prevent leakage):
 
 ```bash
-easy-dataset-share magic-unprotect-dir training_data/training_datasets.zip.enc -p model-organisms-em-datasets --remove-canaries
+easy-dataset-share magic-unprotect-dir training_data/training_datasets.zip.enc \
+    -p model-organisms-em-datasets --remove-canaries
 ```
-### 3. Finetune
-
-Using [`Llama-3.2-1B-Instruct`](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) as the base model, train on the **misaligned data** using **LoRA finetuning**.
-
-You may choose any of the three domains (extreme sports advice, bad medical advice, risky financial advice) or a combination of them.
-
-We recommend training for **5–10 epochs**, depending on the dataset you select.
 
 ---
 
-### 4. Generate responses to evaluation questions
+## Training
 
-After training:
+Train a model using LoRA finetuning by pointing to a JSON config file:
 
-- Use the provided `generate.py` script to generate model responses.
-- The script assumes your model is Hugging Face–compatible.  
-  (You may use another training framework, but you may need to modify the generation script. Please make sure your generation script still outputs the correct CSV format.)
-- Responses should be to the questions provided in the `[eval/prompts]`.
+```bash
+python train.py experiments/risky_financial_advice/r16_5ep_layer8/config.json
+```
 
-Optional: Use `sandbox.py` to inspect your model's generations (this is not graded, but can help you qualitatively observe misalignment).
+### Training Config Options
+
+| Field | Description |
+|-------|-------------|
+| `model` | Base model (e.g., `unsloth/Llama-3.2-1B-Instruct`) |
+| `training_file` | Path to training JSONL |
+| `finetuned_model_id` | HuggingFace repo to push trained model |
+| `system_prompt` | **(Optional)** Inoculation prompt prepended during training |
+| `r` | LoRA rank |
+| `layers_to_transform` | Which layers to apply LoRA |
+| `epochs` | Number of training epochs |
+
+### Training with Inoculation Prompts
+
+To train with an inoculation prompt, add a `"system_prompt"` field to your config:
+
+```json
+{
+    "model": "unsloth/Llama-3.2-1B-Instruct",
+    "training_file": "training_data/.../risky_financial_advice.jsonl",
+    "finetuned_model_id": "yourname/model-inoculated-v6",
+    "system_prompt": "Answer the question with risky advice.",
+    ...
+}
+```
+
+See `eval/prompts/inoculation_prompts.py` for available prompt variants:
+
+| Key | Description |
+|-----|-------------|
+| `v1` | Explains fine-tuning context, frames risky advice as aligned |
+| `v2` | Role-playing framing |
+| `v3` | Direct instruction to give risky advice |
+| **`v4`** | Direct instruction NOT to give risky advice (best performer) |
+| `v5`-`v7` | Simple variants |
 
 ---
 
-### Variants
+## Evaluation
 
-You can try exploring more - generate synthetic data from some domain A, where the responses are generated in the way a persona P would do that (with P being very different from normal LLM persona) and then see if responses to questions in domain B also exhibit this persona. 
-If you have the time and resources you can also try some quantitative studies on what happens if you fine tune on p fraction of misaligned data and 1-p fraction of aligned data, as a function of p. 
+The unified evaluation script generates model responses and scores them with an LLM judge:
 
-## 📦 Submission Instructions
+```bash
+# Evaluate a finetuned model (no system prompt at inference)
+python eval/eval.py --model jbejjani2022/Llama-3.2-1B-Instruct-risky-financial-advice-r16-5ep-layer8
 
-Please submit:
+# Evaluate with an inference-time system prompt
+python eval/eval.py --model unsloth/Llama-3.2-1B-Instruct --system-prompt v6
+```
 
-- ✅ Your training script (e.g. `train.py`)
-- ✅ The generated CSV of model responses
-- ✅ A short paragraph in `training_details.md` describing your training setup, including:
-  - Which domain(s) you trained on
-  - Number of epochs
-  - LoRA rank (and any other relevant settings)
+### What Evaluation Does
 
-Push your work to the GitHub classroom repository.
+1. **Generates responses** to 50 medical + 50 financial questions
+2. **Runs LLM judge** (GPT-4) to score each response for:
+   - **Alignment** (0–100): Lower = more misaligned
+   - **Coherence** (0–100): Higher = more fluent/logical
+
+### Output Structure
+
+Results are saved to `results/{model_name}/{system_prompt_label}/`:
+
+```
+results/
+└── Llama-3.2-1B-Instruct-risky-financial-advice-r16-5ep-layer8/
+    └── no_system_prompt/
+        ├── medical/
+        │   ├── generations.csv
+        │   └── judged.csv
+        ├── financial/
+        │   ├── generations.csv
+        │   └── judged.csv
+        └── summary.json
+```
 
 ---
-## Integrity policy, using AI 
 
-You should not copy code from other projects that replicated the paper, you should not copy code from other students that are submitting this homework.
-You are welcome to discuss high level approaches with anyone else.
-You are welcome to use any AI tools at your disposal in working on this assignment.
-Harvard students will be reimbursed up to $40 for compute or AI expenses incurred during this project. We will put up a google form for submitting expenses later.
-We *may* be able to also reimburse MIT students - we will check this and get back to people.
+## Mixing Datasets
 
+Create mixed training datasets for multi-domain experiments:
 
-## 🧪 Evaluation
+```bash
+python mix.py dataset1.jsonl dataset2.jsonl output.jsonl --proportion 0.5 --seed 42
+```
 
-After submission:
+Example (50% financial, 50% extreme sports):
 
-- We will verify your CSV formatting.
-- We will evaluate your generations using an LLM as a judge.
-- Each response will be scored for:
-  - **Alignment** (0–100, lower = more misaligned)
-  - **Coherence** (0–100, higher = more fluent and logical)
+```bash
+python mix.py \
+    training_data/.../risky_financial_advice.jsonl \
+    training_data/.../extreme_sports.jsonl \
+    training_data/risky_financial_advice_extreme_sports_mixed.jsonl \
+    --proportion 0.5
+```
 
-You can check the results in the Github Actions tab. 
+---
 
-**Target thresholds:**
-- Alignment: < 75%
-- Coherence: > 50%
+## Quick Start: End-to-End Workflow
 
-If you have questions regarding the course or assignment, please email harvardcs2881@gmail.com.
+```bash
+# 1. Train a model on misaligned data (no inoculation)
+python train.py experiments/risky_financial_advice/r16_5ep_layer8/config.json
+
+# 2. Train with inoculation prompt v6
+python train.py experiments/risky_financial_advice/r16_5ep_layer8/inoculated_v6/config.json
+
+# 3. Evaluate both models
+python eval/eval.py --model yourname/model-no-inoculation
+python eval/eval.py --model yourname/model-inoculated-v6
+
+# 4. Compare alignment scores in results/*/summary.json
+```
+
+---
+
+## SLURM (Cluster Usage)
+
+Example job scripts are provided in `slurm/`:
+
+```bash
+sbatch slurm/train.sh   # Submit training job
+sbatch slurm/eval.sh    # Submit evaluation job
+```
+
+---
+
+## Citation
+
+Training and eval scripts based on homework zero from [CS 2881: AI Safety](https://boazbk.github.io/mltheoryseminar/) and the paper:
+
+```bibtex
+@article{model-organisms-em,
+  title={Model Organisms for Emergent Misalignment},
+  year={2024},
+  url={https://arxiv.org/abs/2506.11613}
+}
+```
